@@ -1,0 +1,61 @@
+# Navigate to your project root
+cd ~/Desktop/laravel-clean-xdebug
+
+# Create .gitignore
+cat > .gitignore << 'EOF'
+# Docker
+.env
+docker-compose.override.yml
+
+# Laravel
+/vendor/
+/node_modules/
+/storage/*.key
+/.env
+/.env.backup
+/.env.production
+/.phpunit.cache
+/Homestead.json
+/Homestead.yaml
+/auth.json
+/.idea/
+/.vscode/
+*.sqlite
+*.sqlite-journal
+
+# Composer
+composer.phar
+composer.lock
+
+# NPM
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Mac specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# PHPUnit
+.phpunit.result.cache
+*.log
+
+# Xdebug
+xdebug.log
+
+# Laravel specific
+/storage/framework/cache/data/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/
+/public/storage
+/bootstrap/cache/*.php
+.phan/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*

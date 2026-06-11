@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 1. PHP Web Server (Fixed)
+  php-apache:
+    image: php:8.2-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src/public:/var/www/html
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  # 2. MySQL Database
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # 3. phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+
+volumes:
+  db_data:
