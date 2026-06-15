@@ -1,4 +1,3 @@
-DB.php
 <?php
 class DB {
     private string $host = 'mysql';

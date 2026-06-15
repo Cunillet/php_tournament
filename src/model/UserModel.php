@@ -1,6 +1,5 @@
-UserModel.php
 <?php
-require_once '../scripts/DB.php';
+require_once __DIR__.'../scripts/DB.php';
 
 class UserModel {
     private DB $db;

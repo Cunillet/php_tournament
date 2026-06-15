@@ -1,29 +1,38 @@
-index.php
 <?php
-require_once '../controller/UserController.php';
+// Get the requested path
+$request = $_SERVER['REQUEST_URI'];
+$request = strtok($request, '?'); // Remove query parameters
 
-$userController = new Usercontroller();
-$method = $_SERVER['REQUEST_METHOD'];
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Remove trailing slash
+$request = rtrim($request, '/');
+if (empty($request)) $request = '/';
 
-if (preg_match('/\/users\/(\d+)/', $path, $matches) && $method === 'GET') {
-    $userController->show($matches[1]);
-} elseif ($path === '/users' && $method === 'POST') {
-    $userController->store();
-} elseif (preg_match('/\/users\/(\d+)/', $path, $matches) && $method === 'PUT') {
-    $userController->update($matches[1]);
-} elseif (preg_match('/\/users\/(\d+)/', $path, $matches) && $method === 'DELETE') {
-    $userController->destroy($matches[1]);
-} elseif ($path === '/users/login' && $method === 'POST') {
-    $userController->login();
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Route not found']);
+// Define routes
+$routes = [
+    // Page routes (views)
+    '/' => 'views/home.php',
+    '/register' => 'views/profile/register.php',
+    '/login' => 'views/profile/login.php',
+    '/dashboard' => 'views/dashboard.php',
+    '/profile' => 'views/profile/profile.php',
+    '/about' => 'views/about.php',
+    '/contact' => 'views/contact.php',
+    
+    // API routes (backend)
+    '/api/register' => 'api/register.php',
+    '/api/login' => 'api/login.php',
+    '/api/logout' => 'api/logout.php',
+];
+// Check if route exists
+if (isset($routes[$request])) {
+    $file = __DIR__ . '/' . $routes[$request];
+    
+    if (file_exists($file)) {
+        require_once $file;
+        exit;
+    }
 }
 
-
-    // volumes:
-    //   - ./src/:/var/www/html/
-    //   - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-    //   - ./php.ini:/usr/local/etc/php/php.ini
-?>
+// If no route found, show 404
+http_response_code(404);
+require_once __DIR__ . '/views/404.php';

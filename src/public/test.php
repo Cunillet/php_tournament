@@ -1,6 +1,6 @@
 <?php
 $host = 'mysql';
-$db = 'my_database';
+$db = 'db_tournament';
 $user = 'my_user';
 $pass = 'my_password';
 
