@@ -3,8 +3,8 @@ class DB {
     private string $host = 'mysql';
     private string $port = '3306';
     private string $user = 'root';
-    private string $pwd = 'root';
-    private string $dbname = 'db_test';
+    private string $pwd = 'rootpassword';
+    private string $dbname = 'db_tournament';
     private ?PDO $connection;
     private static $instance = null;
 
@@ -52,7 +52,7 @@ class DB {
 
     public function insert($table, $data) {
         $columns = implode(', ', array_keys($data));
-        $placeholders = ':' . implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
         $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
         $this->query($sql, $data);
         return $this->connection->lastInsertId();

@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__.'../scripts/DB.php';
+require_once __DIR__.'/../scripts/DB.php';
 
 class UserModel {
     private DB $db;
-    private string $table='test_user';
+    private string $table='tt_user';
 
     public function __construct() {
         $this->db = DB::getInstance();
@@ -15,16 +15,16 @@ class UserModel {
     }
 
     public function getUserByEmail(string $email) {
-        $sql = "SELECT * FROM {$this->table} WHERE user_email = :email";
-        return $this->db->fetchOne($sql, ['user_email' => $email]);
+        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
+        return $this->db->fetchOne($sql, ['email' => $email]);
     }
 
     public function createUser(string $name, string $email, string $pwd) {
         $hashPwd = password_hash($pwd, PASSWORD_DEFAULT);
         $data = [
-            'user_name' => $name,
-            'user_email' => $email,
-            'user_pwd' => $pwd
+            'name' => $name,
+            'email' => $email,
+            'password' => $hashPwd
         ];
         return $this->db->insert($this->table, $data);
     }
