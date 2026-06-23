@@ -3,7 +3,7 @@
         <!-- Your content here -->
         <h1>Login</h1>
         <div id="message"></div>
-        <form action="api/login" id="loginForm" method="POST" class="d-flex flex-column">
+        <form action="/login" id="loginForm" method="POST" class="d-flex flex-column">
             <span class="">
                 <input type="email" name="user_email" id="user_email" placeholder="email"/>
             </span>

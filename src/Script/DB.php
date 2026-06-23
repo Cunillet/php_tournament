@@ -1,26 +1,28 @@
 <?php
+namespace App\Script;
+
 class DB {
     private string $host = 'mysql';
     private string $port = '3306';
     private string $user = 'root';
     private string $pwd = 'rootpassword';
     private string $dbname = 'db_tournament';
-    private ?PDO $connection;
+    private ?\PDO $connection;
     private static $instance = null;
 
     private function __construct() {
         try {
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8";
-            $this->connection = new PDO(
+            $this->connection = new \PDO(
                 $dsn,
                 $this->user,
                 $this->pwd
             );
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 
             
-        } catch(PDOException $e) {
+        } catch(\PDOException $e) {
             die("Error -- connection failed: {$e->getMessage()}");
         }
     }

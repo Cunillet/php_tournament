@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__.'/../scripts/DB.php';
+namespace App\Model;
+use App\Script\DB;
 
 class UserModel {
     private DB $db;

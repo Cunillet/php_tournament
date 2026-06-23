@@ -3,7 +3,7 @@
         <!-- Your content here -->
         <h1>Register</h1>
         <div id="message"></div>
-        <form action="api/register" id="registerForm" method="POST" class="d-flex flex-column">
+        <form action="/register" id="registerForm" method="POST" class="d-flex flex-column">
             <span class="">
                 <input type="text" name="user_name" id="user_name" placeholder="user display name"/>
             </span>

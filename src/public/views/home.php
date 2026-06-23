@@ -5,7 +5,7 @@
         <div id="message"></div>
         <?php if ($_SESSION['logged_in']) { ?>
             <p class="row">User logged in: <?php echo $_SESSION['logged_in'] ? $_SESSION['user_name'] : 'Session corrupted, please logout and login again' ?></p>
-            <form action="api/logout" method="POST" id="logoutForm" class="row">
+            <form action="/logout" method="GET" id="logoutForm" class="row">
                 <input type="submit" class="btn btn-danger" value="Logout"/>
             </p>
         <?php } else { ?>

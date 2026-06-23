@@ -1,33 +1,37 @@
 <?php
-require_once __DIR__.'/../model/UserModel.php';
+namespace App\Controller;
 
-class UserController {
-    private UserModel $user;
+use App\Controller\BaseController;
+use App\Service\UserService;
+use App\Helper\ViewHelper;
 
-    public function __construct() {
-        $this->user = new UserModel();
+class UserController extends BaseController {
+    private UserService $user;
+
+    public function __construct()
+    {
+        $this->user = new UserService();
     }
 
     public function show($id) {
-        try {
-            $user = $this->user->getUserById($id);
+        $user = $this->user->getUser($id);
 
-            if (!$user) {
-                http_response_code(404);
-                echo json_encode(['error' => 'User not found']);
-                return;
-            }
-
-            unset($user['password']);
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'data' => $user
-            ]);
-        } catch(Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+        if (!$user) {
+            http_response_code(404);
+            echo json_encode(['error' => 'User not found']);
+            ViewHelper::loadWithMasterView('views/404.php');
         }
+
+        unset($user['password']);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => $user
+        ]);
+    }
+
+    public function loginView() {
+        ViewHelper::loadWithMasterView('views/profile/login.php');
     }
 
     public function login() {
@@ -36,7 +40,6 @@ class UserController {
             $json = file_get_contents('php://input');
             // Decode JSON to PHP object or array
             $data = json_decode($json, true); // true makes it an associative array
-            
             $input = [];
             $input['password'] = $data['password'] ?? '';
             $input['email'] = $data['email'] ?? '';
@@ -46,29 +49,24 @@ class UserController {
                 echo json_encode(['error' => 'email and password required']);
                 return;
             }
-            $user = $this->user->getUserByEmail($input['email']);
-            if (!$user) {
-                http_response_code(400);
-                echo json_encode(['error' => 'incorrect email or password']);
-                return;
-            }
-            if (!password_verify($input['password'], $user['password'])) {
-                http_response_code(400);
-                echo json_encode(['error' => 'incorrect email or password']);
+            $data = $this->user->getUserByEmail($input['email'], $input['password']);
+            if (isset($user['error'])) {
+                http_response_code($data['code']);
+                echo json_encode($data);
                 return;
             }
 
             session_regenerate_id(true);
             $_SESSION['logged_in'] = true;
             $_SESSION['last_activity'] = time();
-            $_SESSION['user_id'] = $user['ID'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_id'] = $data['ID'];
+            $_SESSION['user_email'] = $data['email'];
+            $_SESSION['user_name'] = $data['name'];
             http_response_code(200);
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => true,
-                'data' => $user
+                'data' => $data
             ]);
         } catch(Exception $e) {
             http_response_code(500);
@@ -98,45 +96,21 @@ class UserController {
         }
     }
 
+    public function storeView() {
+        ViewHelper::loadWithMasterView('views/profile/register.php');
+    }
+
     public function store() {
-        try {
-            // Get the raw JSON input
-            $json = file_get_contents('php://input');
-            // Decode JSON to PHP object or array
-            $data = json_decode($json, true); // true makes it an associative array
-            
-            $input = [];
-            $input['name'] = $data['name'] ?? '';
-            $input['email'] = $data['email'] ?? '';
-            $input['password'] = $data['password'] ?? '';
-            if (empty($input['name']) || empty($input['email']) || empty($input['password'])) {
-                http_response_code(400);
-
-                echo json_encode(['error' => 'name, email and password are required']);
-                return;
-            }
-
-            if ($this->user->getUserByEmail($input['email'])) {
-                http_response_code(409);
-                echo json_encode(['error' => 'Email already exists']);
-                return;
-            }
-
-            $userId = $this->user->createUser(
-                $input['name'],
-                $input['email'],
-                $input['password']
-            );
-            http_response_code(200);
-            echo json_encode([
-                'success' => true,
-                'message' => 'user created successfully',
-                'userId' => $userId
-            ]);
-        } catch(Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-        }
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        
+        $input = [];
+        $input['name'] = $data['name'] ?? '';
+        $input['email'] = $data['email'] ?? '';
+        $input['password'] = $data['password'] ?? '';
+        $response = $this->user->createUser($input);
+        
+        return $this->jsonResponse($response, $response['code']);
     }
 
     public function update(int $id) {
