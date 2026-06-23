@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Router\Route;
+use App\Middleware\MiddlewareInterface;
 
 class CorsMiddleware implements MiddlewareInterface {
     private array $allowedOrigins;

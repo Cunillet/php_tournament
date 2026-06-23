@@ -11,7 +11,7 @@ class UserModel {
     }
 
     public function getUserById(int $id) {
-        $sql = "SELECT * FROM {$table} WHERE ID = :id";
+        $sql = "SELECT * FROM {$this->table} WHERE ID = :id";
         return $this->db->fetchOne($sql, ['id' => $id]);
     }
 

@@ -12,7 +12,7 @@ return function (Router $router) {
     $router->get('/logout', UserController::class, 'logout');
     $router->get('/register', UserController::class, 'storeView');
     $router->post('/register', UserController::class, 'store');
-    $router->get('/profile/{id}', UserController::class, 'profile');
+    $router->get('/profile/{id}', UserController::class, 'profileView');
     $router->post('/profile', UserController::class, 'store');
     $router->put('/profile/{id}', UserController::class, 'update');
     $router->delete('/profile/{id}', UserController::class, 'destroy');

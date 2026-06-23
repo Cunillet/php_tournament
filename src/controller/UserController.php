@@ -8,12 +8,11 @@ use App\Helper\ViewHelper;
 class UserController extends BaseController {
     private UserService $user;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->user = new UserService();
     }
 
-    public function show($id) {
+    public function profileView($id) {
         $user = $this->user->getUser($id);
 
         if (!$user) {
@@ -23,11 +22,7 @@ class UserController extends BaseController {
         }
 
         unset($user['password']);
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true,
-            'data' => $user
-        ]);
+        ViewHelper::loadWithMasterView('views/profile/profile.php', $user);
     }
 
     public function loginView() {
@@ -55,13 +50,7 @@ class UserController extends BaseController {
                 echo json_encode($data);
                 return;
             }
-
-            session_regenerate_id(true);
-            $_SESSION['logged_in'] = true;
-            $_SESSION['last_activity'] = time();
-            $_SESSION['user_id'] = $data['ID'];
-            $_SESSION['user_email'] = $data['email'];
-            $_SESSION['user_name'] = $data['name'];
+            $this->user->createUserSession($data);
             http_response_code(200);
             header('Content-Type: application/json');
             echo json_encode([
@@ -74,7 +63,7 @@ class UserController extends BaseController {
         }
     }
 
-    public function logout($redirectHome = true) {
+    public function logout(bool $redirectHome = true) {
         $_SESSION = array(); // Clear all session variables
 
         // Delete session cookie
@@ -109,6 +98,10 @@ class UserController extends BaseController {
         $input['email'] = $data['email'] ?? '';
         $input['password'] = $data['password'] ?? '';
         $response = $this->user->createUser($input);
+        if (!isset($response['error'])) {
+            $user = $this->user->getUser($response['userId']);
+            $this->user->createUserSession($user);
+        } 
         
         return $this->jsonResponse($response, $response['code']);
     }

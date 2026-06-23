@@ -58,11 +58,21 @@ class UserService {
             return [
                 'success' => true,
                 'message' => 'user created successfully',
-                'userId' => $userId
+                'userId' => $userId,
+                'code' => 200
             ];
         } catch(Exception $e) {
             return ['error' => $e->getMessage(), 'code' => 500];
         }
+    }
+
+    public function createUserSession($user) {
+            session_regenerate_id(true);
+            $_SESSION['logged_in'] = true;
+            $_SESSION['last_activity'] = time();
+            $_SESSION['user_id'] = $user['ID'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_name'] = $user['name'];
     }
 
     public function updateUser(int $id, array $data): array {
