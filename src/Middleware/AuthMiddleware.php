@@ -9,20 +9,29 @@ use App\Controller\UserController;
 class AuthMiddleware implements MiddlewareInterface {
     private array $privatePaths;
     private array $guestPaths;
+    private array $adminPaths;
 
     public function __construct() {
         $this->privatePaths = [
             '/logout',
+            '/tournaments',
+            '/tournaments/create',
+            '/tournaments/{id}',
+            '/tournaments/join/{id}',
         ];
         $this->guestPaths = [
             '/login',
             '/register',
         ];
+        $this->adminPaths = [
+            '/gameTypes',
+            '/gameTypes/create',
+        ];
     }
 
     private function isPrivateOnly(Route $route): bool {
         foreach($this->privatePaths as $privatePath) {
-            if ($route->getPath() === $privatePath) {
+            if ($route->matches($route->getMethods()[0], $privatePath)) {
                 return true;
             }
         }
@@ -31,7 +40,16 @@ class AuthMiddleware implements MiddlewareInterface {
 
     private function isGuestOnly(Route $route): bool {
         foreach($this->guestPaths as $guestPath) {
-            if ($route->getPath() === $guestPath) {
+            if ($route->matches($route->getMethods()[0], $guestPath)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isAdminOnly(Route $route): bool {
+        foreach($this->adminPaths as $adminPath) {
+            if ($route->matches($route->getMethods()[0], $adminPath)) {
                 return true;
             }
         }
@@ -48,6 +66,12 @@ class AuthMiddleware implements MiddlewareInterface {
             }
         } else {
             if ($this->isGuestOnly($route)) {
+                ViewHelper::redirectHome();
+                exit(0);
+            }
+        }
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
+            if ($this->isAdminOnly($route)) {
                 ViewHelper::redirectHome();
                 exit(0);
             }

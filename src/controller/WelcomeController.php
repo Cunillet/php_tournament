@@ -8,6 +8,6 @@ class WelcomeController extends BaseController
 {
     public function index()
     {
-        ViewHelper::loadWithMasterView('views/home.php');
+        ViewHelper::loadWithMasterView('views/home.php', ['ignoreBack' => true]);
     }
 }

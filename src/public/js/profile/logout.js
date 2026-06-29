@@ -1,7 +1,8 @@
 'use strict';
 
 const logoutForm = document.getElementById('logoutForm');
-const messageDiv = document.getElementById('message');
+const messageContainer = document.getElementById('alertMessage');
+const messageSpan = document.getElementById('alertSpanMessage');
 
 
 // Add submit event listener
@@ -31,7 +32,7 @@ logoutForm.addEventListener('submit', function(event) {
     .then(data => {
         // Handle successful login
         console.log('Logout successful');
-        showMessage('Logout successful, wish to see you soon! Redirecting...', 'success');
+        showMessage('Logout successful, wish to see you soon! Redirecting...', 'alert-success');
         
         // Clear storage token
         if (data.token) {
@@ -46,18 +47,19 @@ logoutForm.addEventListener('submit', function(event) {
     .catch(error => {
         // Handle errors
         console.error('Error:', error);
-        showMessage(error.message, 'error');
+        showMessage(error.message, 'alert-danger');
     });
 });
 
 // Helper function to show messages
 function showMessage(message, type) {
-    messageDiv.textContent = message;
-    messageDiv.className = type;
+    messageSpan.textContent = message;
+    messageContainer.classList.remove('d-none'); 
+    messageContainer.classList.add(type);
     
     // Clear message after 5 seconds
     setTimeout(() => {
-        messageDiv.textContent = '';
-        messageDiv.className = '';
+        messageContainer.classList.remove(type);
+        messageContainer.classList.add('d-none');
     }, 5000);
 }

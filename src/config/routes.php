@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use App\Router\Router;
+use App\Controller\GameTypeController;
+use App\Controller\TournamentController;
 use App\Controller\UserController;
 use App\Controller\WelcomeController;
-use App\Router\Router;
 
 return function (Router $router) {
     $router->get('/', WelcomeController::class, 'index');
@@ -16,6 +18,16 @@ return function (Router $router) {
     $router->post('/profile', UserController::class, 'store');
     $router->put('/profile/{id}', UserController::class, 'update');
     $router->delete('/profile/{id}', UserController::class, 'destroy');
+    
+    $router->get('/tournaments', TournamentController::class, 'index');
+    $router->get('/tournaments/{id}', TournamentController::class, 'show');
+    $router->post('/tournaments/join/{id}', TournamentController::class, 'join');
+    $router->get('/tournaments/create', TournamentController::class, 'create');
+    $router->post('/tournaments', TournamentController::class, 'store');
+
+    $router->get('/gameTypes', GameTypeController::class, 'index');
+    $router->get('/gameTypes/create', GameTypeController::class, 'create');
+    $router->post('/gameTypes', GameTypeController::class, 'store');
     
     // With middleware
     // $router->post('/admin/users', UserController::class, 'adminCreate')

@@ -1,7 +1,8 @@
 'use strict';
 
 const registerForm = document.getElementById('registerForm');
-const messageDiv = document.getElementById('message');
+const messageContainer = document.getElementById('alertMessage');
+const messageSpan = document.getElementById('alertSpanMessage');
 
 const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -21,7 +22,7 @@ registerForm.addEventListener('submit', function(event) {
     if (!email || !password || !name ||
         email.length < 3 || password.length < 3 || name.length < 3 ||
         !isValidEmail(email)) {
-        showMessage('Please fill in all fields and check they have valid constructions', 'error');
+        showMessage('Please fill in all fields and check they have valid constructions', 'alert-danger');
         return;
     }
     
@@ -56,7 +57,7 @@ registerForm.addEventListener('submit', function(event) {
     .then(data => {
         // Handle successful login
         console.log('Login successful:', data);
-        showMessage('Login successful! Redirecting...', 'success');
+        showMessage('Login successful! Redirecting...', 'alert-success');
         
         // Store token if returned
         if (data.token) {
@@ -71,18 +72,19 @@ registerForm.addEventListener('submit', function(event) {
     .catch(error => {
         // Handle errors
         console.error('Error:', error);
-        showMessage(error.message, 'error');
+        showMessage(error.message, 'alert-danger');
     });
 });
 
 // Helper function to show messages
 function showMessage(message, type) {
-    messageDiv.textContent = message;
-    messageDiv.className = type;
+    messageSpan.textContent = message;
+    messageContainer.classList.remove('d-none'); 
+    messageContainer.classList.add(type);
     
     // Clear message after 5 seconds
     setTimeout(() => {
-        messageDiv.textContent = '';
-        messageDiv.className = '';
+        messageContainer.classList.remove(type);
+        messageContainer.classList.add('d-none');
     }, 5000);
 }

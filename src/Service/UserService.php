@@ -73,6 +73,7 @@ class UserService {
             $_SESSION['user_id'] = $user['ID'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_role'] = $user['role'];
     }
 
     public function updateUser(int $id, array $data): array {

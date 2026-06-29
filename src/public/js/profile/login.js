@@ -1,7 +1,8 @@
 'use strict';
 
 const loginForm = document.getElementById('loginForm');
-const messageDiv = document.getElementById('message');
+const messageContainer = document.getElementById('alertMessage');
+const messageSpan = document.getElementById('alertSpanMessage');
 
 const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -13,14 +14,14 @@ loginForm.addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent traditional form submission
     
     // Get form values
-    const email = document.getElementById('user_email').value;
-    const password = document.getElementById('user_password').value;
+    const email = document.getElementById('inputEmail').value;
+    const password = document.getElementById('inputPassword').value;
     
     // Basic validation
     if (!email || !password ||
         email.length < 3 || password.length < 3 ||
         !isValidEmail(email)) {
-        showMessage('Please fill in all fields and check they have valid constructions', 'error');
+        showMessage('Please fill in all fields and check they have valid constructions', 'alert-danger');
         return;
     }
     
@@ -32,7 +33,7 @@ loginForm.addEventListener('submit', function(event) {
     
     // Make AJAX call with Fetch API
     fetch(loginForm.action, {
-        method: 'POST',
+        method: loginForm.method.toUpperCase(),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -49,12 +50,12 @@ loginForm.addEventListener('submit', function(event) {
                 throw new Error('Login failed. Please try again.');
             }
         }
-        return response.json();
+        return response;
     })
     .then(data => {
         // Handle successful login
         console.log('Login successful:', data);
-        showMessage('Login successful! Redirecting...', 'success');
+        showMessage('Login successful! Redirecting...', 'alert-success');
         
         // Store token if returned
         if (data.token) {
@@ -69,18 +70,19 @@ loginForm.addEventListener('submit', function(event) {
     .catch(error => {
         // Handle errors
         console.error('Error:', error);
-        showMessage(error.message, 'error');
+        showMessage(error.message, 'alert-danger');
     });
 });
 
 // Helper function to show messages
 function showMessage(message, type) {
-    messageDiv.textContent = message;
-    messageDiv.className = type;
+    messageSpan.textContent = message;
+    messageContainer.classList.remove('d-none'); 
+    messageContainer.classList.add(type);
     
     // Clear message after 5 seconds
     setTimeout(() => {
-        messageDiv.textContent = '';
-        messageDiv.className = '';
+        messageContainer.classList.remove(type);
+        messageContainer.classList.add('d-none');
     }, 5000);
 }

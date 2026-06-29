@@ -7,17 +7,32 @@ extract($data);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $title ?? 'PHP Tournaments'; ?></title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title><?php echo $title ?? 'DD Tournaments'; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .grid-stripped .row:nth-child(even) {
+            background-color: lightgray;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-dark text-light">
+    <?php include $BASE_PATH.'partials/alertMessage.php' ?>
     <?php include $BASE_PATH.'partials/header.php'; ?>
     
-    <main class="container">
+    <main class="container my-5">
         <?php include $view; ?>
+        <?php 
+        if (!isset($ignoreBack) || (isset($ignoreBack) && !$ignoreBack)) {
+            include $BASE_PATH.'partials/back.php';
+        }
+        ?>
     </main>
     
     <?php include $BASE_PATH.'partials/footer.php'; ?>
+    <script src="../../js/profile/logout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
