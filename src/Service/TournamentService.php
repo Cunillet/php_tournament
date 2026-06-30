@@ -5,14 +5,17 @@ namespace App\Service;
 
 use App\Model\TournamentModel;
 use App\Model\TournamentPlayerModel;
+use App\Model\RoundGameModel;
 
 class TournamentService {
     private TournamentModel $tournament;
     private TournamentPlayerModel $tournamentPlayer;
+    private RoundGameModel $roundGame;
 
     public function __construct() {
         $this->tournament = new TournamentModel();
         $this->tournamentPlayer = new TournamentPlayerModel();
+        $this->roundGame = new RoundGameModel();
     }
 
     public function getTournamentAll() {
@@ -53,11 +56,11 @@ class TournamentService {
         }
     }
 
-    public function joinPlayerToTournament(string $userId, string $tournamentId) {
+    public function joinPlayerToTournament(string $id, string $userId) {
         try {
-            $tournamentId = $this->tournamentPlayer->storeTournamentPlayer(
+            $id = $this->tournamentPlayer->storeTournamentPlayer(
+                $id,
                 $userId,
-                $tournamentId,
             );
             return [
                 'success' => true,
@@ -69,9 +72,47 @@ class TournamentService {
         }
     }
 
-    public function hasUserJoined(string $id, string $tournamentId) {
+    public function getTournamentPlayers(string $id) {
         try {
-            return $this->tournamentPlayer->getTournamentPlayer($id, $tournamentId);
+            return $this->tournamentPlayer->getTournamentPlayersCount($id);
+        } catch(\Exception $e) {
+            return ['error' => $e->getMessage(), 'code' => 500];
+        }
+    }
+
+    public function hasUserJoined(string $id, string $userId) {
+        try {
+            return $this->tournamentPlayer->getTournamentPlayer($id, $userId);
+        } catch(\Exception $e) {
+            return ['error' => $e->getMessage(), 'code' => 500];
+        }
+    }
+
+    public function createRound(string $id) {
+        try {
+            $tournamentPlayers = $this->tournamentPlayer->getTournamentPlayers($id);
+            $players = array_column($tournamentPlayers, 'user_id');
+            // Shuffle players
+            shuffle($players);
+
+            // Check if odd number of players
+            if (count($players) % 2 !== 0) {
+                // Add a bye (null or 'BYE')
+                $players[] = null;
+            }
+
+            // Create pairs
+            $matches = array_chunk($players, 2);
+
+            // Remove pairs with null
+            $matches = array_filter($matches, function($match) {
+                return !in_array(null, $match);
+            });
+            $results = [];
+            foreach($matches as $match) {
+                $results[] =  $this->roundGame->createRoundGames($id, '1', $match);
+            }
+            return ['matches' =>$results, 'code' => 200];
         } catch(\Exception $e) {
             return ['error' => $e->getMessage(), 'code' => 500];
         }

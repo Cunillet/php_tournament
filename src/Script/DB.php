@@ -52,6 +52,10 @@ class DB {
         return $this->query($sql, $params)->fetch();
     }
 
+    public function rowsCount($sql, $params=[]) {
+        return $this->query($sql, $params)->rowCount();
+    }
+
     public function insert($table, $data) {
         $columns = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));

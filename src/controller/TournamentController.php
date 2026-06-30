@@ -38,7 +38,8 @@ class TournamentController extends BaseController {
         if (count($tournaments) > 0) {
             // Add reference to $tournament to update its value
             foreach($tournaments as &$tournament) {
-                $tournament['players_count'] = 0;
+                $playersCount = $this->tournament->getTournamentPlayers($tournament['ID']);
+                $tournament['players_count'] = $playersCount;
             }
         }
         return $tournaments;
@@ -83,7 +84,7 @@ class TournamentController extends BaseController {
             exit(0);
         }
         $tournament = $this->getTournamentFull($id);
-        $userJoined = $this->tournament->hasUserJoined($userId, $id);
+        $userJoined = $this->tournament->hasUserJoined($id, $userId);
         ViewHelper::loadWithMasterview('views/tournament/show.php', [
             'tournament' => $tournament,
             'userJoined' => $userJoined,
@@ -112,7 +113,12 @@ class TournamentController extends BaseController {
             $userController->logout(true);
             exit(0);
         }
-        $response = $this->tournament->joinPlayerToTournament($_SESSION['user_id'], $id);
+        $response = $this->tournament->joinPlayerToTournament($id, $_SESSION['user_id']);
+        return $this->jsonResponse($response, $response['code']);
+    }
+
+    public function createRoundGames(string $id) {
+        $response = $this->tournament->createRound($id);
         return $this->jsonResponse($response, $response['code']);
     }
 }

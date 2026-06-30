@@ -24,6 +24,7 @@ return function (Router $router) {
     $router->post('/tournaments/join/{id}', TournamentController::class, 'join');
     $router->get('/tournaments/create', TournamentController::class, 'create');
     $router->post('/tournaments', TournamentController::class, 'store');
+    $router->post('/rounds/create/{id}', TournamentController::class, 'createRoundGames');
 
     $router->get('/gameTypes', GameTypeController::class, 'index');
     $router->get('/gameTypes/create', GameTypeController::class, 'create');
