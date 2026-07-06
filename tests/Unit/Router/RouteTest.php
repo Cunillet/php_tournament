@@ -102,14 +102,15 @@ final class RouteTest extends TestCase
     /** @dataProvider provideNonMatchingCases */
     public function testReturnsFalseWhenRouteDoesNotMatch(
         string $routePath,
-        string $method,
+        array $routeMethods,
+        string $requestMethod,
         string $uri
     ): void {
         // Given
-        $route = new Route($routePath, 'C', 'a', [$method]);
+        $route = new Route($routePath, 'C', 'a', $routeMethods);
 
         // When
-        $result = $route->matches($method, $uri);
+        $result = $route->matches($requestMethod, $uri);
 
         // Then
         $this->assertFalse($result);
@@ -117,9 +118,9 @@ final class RouteTest extends TestCase
 
     public static function provideNonMatchingCases(): iterable
     {
-        yield 'wrong method' => ['/home', 'POST', '/home'];
-        yield 'different path' => ['/users', 'GET', '/posts'];
-        yield 'extra segments' => ['/users', 'GET', '/users/1'];
+        yield 'wrong method' => ['/home', ['GET'], 'POST', '/home'];
+        yield 'different path' => ['/users', ['GET'], 'GET', '/posts'];
+        yield 'extra segments' => ['/users', ['GET'], 'GET', '/users/1'];
     }
 
     public function testGetParametersReturnsEmptyArrayByDefault(): void
