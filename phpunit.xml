@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache">
+
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+
+    <php>
+        <const name="PHPUNIT_TEST" value="true"/>
+        <const name="SESSION_TIME" value="3600"/>
+        <const name="SESSION_NAME" value="TEST_SESSION"/>
+        <const name="SESSION_HHTPONLY" value="true"/>
+        <const name="SESSION_SECURE" value="false"/>
+        <const name="SESSION_SAMETIME" value="Strict"/>
+        <const name="SESSIONSTRICT_MODE" value="true"/>
+        <const name="SESSION_STRICT" value="0"/>
+    </php>
+</phpunit>
