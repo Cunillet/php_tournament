@@ -59,3 +59,4 @@ xdebug.log
 .idea/
 .vscode/
 *.sublime-*
+.github/
