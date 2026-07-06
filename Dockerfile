@@ -1,10 +1,18 @@
 FROM php:8.2-apache
 
-# Install mysqli extension
-RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        unzip \
+        libzip-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-install mysqli zip && docker-php-ext-enable mysqli zip
 
 # Optional: Install other common PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+
+# Install Composer (multi-stage copy from official image)
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Set document root using environment variable
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf

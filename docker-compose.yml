@@ -6,6 +6,7 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
+      - .:/project   # mounted for running tests without affecting the app
     build:
       context: .
       dockerfile: Dockerfile
